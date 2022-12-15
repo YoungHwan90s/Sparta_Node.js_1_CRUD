@@ -46,7 +46,7 @@ router.get("/posts/:postsId", async (req, res) => {
 // 게시글 작성 API
 router.post("/posts/:postsId", async (req, res) => {
     const { postsId } = req.params;
-    const createdAt = new Date()
+    const createdAt = new Date();
     const { title, name, password, content } = req.body;
 
     const posts = await Posts.find({ postsId });
@@ -62,13 +62,23 @@ router.post("/posts/:postsId", async (req, res) => {
 // 게시글 수정
 router.put("/posts/:postsId/", async (req, res) => {
     const { postsId } = req.params;
-    const { title, content } = req.body;
+    const { title, content, password } = req.body;
 
     const existsPosts = await Posts.find({ postsId: Number(postsId) });
-    if (existsPosts.length) {
+    // 비밀번호 추출
+    const savedPassword = existsPosts.map((post) => {
+        return {
+            "password": post.password
+        };
+    });
+    // 현재 비밀번호가 배열안에 들어가 있기 때문에, results[0] 에서 value값 추출
+    const security = Object.values(savedPassword[0])
+
+    // 추출된 value 값 = [ 1234 ]
+    if (existsPosts.length && security[0] === password) {
         await Posts.updateOne({ postsId: Number(postsId) }, { $set: { title, content } });
     } else {
-        return res.status(404).json({ success: false, result: "해당 데이터를 찾을 수 없습니다." });
+        return res.status(404).json({ success: false, result: "해당 데이터를 찾을 수 없거나 비밀번호가 틀렸습니다." });
     }
 
     res.json({ success: true, result: "수정 완료" });
@@ -77,9 +87,20 @@ router.put("/posts/:postsId/", async (req, res) => {
 // 게시글 삭제
 router.delete("/posts/:postsId", async (req, res) => {
     const { postsId } = req.params;
+    const { password } = req.body;
     const existsPosts = await Posts.find({ postsId });
-    if (existsPosts.length) {
+    const savedPassword = existsPosts.map((post) => {
+        return {
+            "password": post.password
+        };
+    });
+    // 현재 비밀번호가 배열안에 들어가 있기 때문에, results[0] 에서 value값 추출
+    const security = Object.values(savedPassword[0])
+
+    if (existsPosts.length && security[0] === password) {
         await Posts.deleteOne({ postsId });
+    } else {
+        return res.status(404).json({ success: false, result: "비밀번호가 틀렸습니다." });
     }
 
     res.status(200).json({ success: true, result: "삭제 완료" });

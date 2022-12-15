@@ -30,9 +30,13 @@ router.post("/posts/:postsId/comments", async (req, res) => {
     const { name, comment } = req.body;
     const createdAt = new Date()
 
+    if (comment === "") {
+        return res.status(404).json({ success: false, result: "댓글 내용을 입력해주세요" });
+    } else {
 
-    await Comments.create({ postsId, name, comment, createdAt });
-    res.json({ result: "작성완료" });
+        await Comments.create({ postsId, name, comment, createdAt });
+        res.json({ result: "작성완료" });
+    }
 })
 
 // 댓글 수정 API
@@ -43,7 +47,7 @@ router.put("/posts/:postsId/comments", async (req, res) => {
 
     const existsComments = await Comments.find({ postsId });
     if (existsComments.length) {
-        await Comments.updateOne({ postsId: Number( postsId ) }, { $set: { comment, createdAt } });
+        await Comments.updateOne({ postsId: Number(postsId) }, { $set: { comment, createdAt } });
     } else {
         return res.status(404).json({ success: false, result: "댓글 내용을 입력해주세요" });
     }
