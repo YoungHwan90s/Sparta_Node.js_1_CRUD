@@ -13,6 +13,7 @@ connect();
 app.use(express.json());
 app.use("/api", [postsRouter, commentsRouter]);
 
+// http://52.79.189.250/
 app.get('/', (req, res) => {
     res.send('The page is successfully open');
   });
@@ -20,3 +21,4 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
   console.log(port, '포트로 서버가 열렸어요!');
 });
+
