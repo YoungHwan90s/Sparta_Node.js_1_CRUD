@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const connect = () => {
   mongoose
-    .connect("mongodb://127.0.0.1:27017/sparta_homework")
+    .connect("mongodb+srv://test:sparta@cluster0.8d7bfaw.mongodb.net/?retryWrites=true&w=majority")
     .catch(err => console.log(err));
 };
 
