@@ -6,25 +6,25 @@ const Posts = require("../schemas/post");
 // 댓글 목록 조회 API
 router.get("/posts/:postsId/comments", async (req, res) => {
     const { postsId } = req.params;
-    
+
     // postsId에 해당하는 post를 가지고 오기
-    const posts = await Posts.find({ postsId: postsId });
+    const posts = await Posts.find({ postsId });
     const savedPost = posts.map((post) => {
         return {
-            "title": post.title,
-            "name": post.name,
-            "content": post.content,
-            "createdAt": post.createdAt
+            "제목": post.title,
+            "이름": post.name,
+            "내용": post.content,
+            "작성일": post.createdAt
         };
     });
     // postsId에 해당하는 comments 가지고 오기
-    const comments = await Comments.find({ postsId: postsId }).sort({createdAt : -1});
+    const comments = await Comments.find({ postsId }).sort({ createdAt: -1 });
     const savedComment = comments.map((comment) => {
         return {
             "No.": comment.commentsId,
-            "name": comment.name,
-            "comment": comment.comment,
-            "createdAt": comment.createdAt
+            "이름": comment.name,
+            "댓글 내용": comment.comment,
+            "작성일": comment.createdAt
         };
     });
     res.json({ "게시글": savedPost, "댓글 목록": savedComment });
@@ -35,12 +35,12 @@ router.get("/posts/:postsId/comments", async (req, res) => {
 router.post("/posts/:postsId/comments/:commentsId", async (req, res) => {
     const { postsId, commentsId } = req.params;
     const { name, comment } = req.body;
-  
+
     if (comment === "") {
         return res.status(404).json({ success: false, result: "댓글 내용을 입력해주세요" });
     } else {
 
-        await Comments.create({ postsId, commentsId, name, comment});
+        await Comments.create({ postsId, commentsId, name, comment });
         res.json({ result: "작성완료" });
     }
 })
