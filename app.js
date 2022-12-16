@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const port = 4000;
+const port = 3000;
 
 // Router 미들웨어를 사용하겠다
 const postsRouter = require("./routes/posts");

@@ -5,6 +5,11 @@ const commentsSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
+  commentsId: {
+    unique : true,
+    type: Number,
+    required: true
+  },
   name: {
     type: String
   },
