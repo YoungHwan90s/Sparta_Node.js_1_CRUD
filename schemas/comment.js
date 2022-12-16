@@ -3,8 +3,7 @@ const mongoose = require("mongoose");
 const commentsSchema = new mongoose.Schema({
   postsId: {
     type: Number,
-    required: true,
-    unique: true
+    required: true
   },
   name: {
     type: String
@@ -13,8 +12,9 @@ const commentsSchema = new mongoose.Schema({
     type: String
   },
   createdAt: {
-    type: Date
+    type: Date,
+    default: Date.now
   }
-});
+}, { versionKey: false });
 
 module.exports = mongoose.model("comments", commentsSchema);

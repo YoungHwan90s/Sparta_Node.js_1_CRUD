@@ -4,7 +4,7 @@ const Posts = require("../schemas/post");
 
 // 전체 게시글 조회 API
 router.get("/posts", async (req, res) => {
-    const posts = await Posts.find({});
+    const posts = await Posts.find({}).sort({createdAt : -1});
     const results = posts.map((post) => {
         return {
             "title": post.title,
@@ -12,7 +12,7 @@ router.get("/posts", async (req, res) => {
             "createdAt": post.createdAt
         };
     });
-
+    
     res.status(200).json({
         "posts": results,
     });
@@ -46,7 +46,6 @@ router.get("/posts/:postsId", async (req, res) => {
 // 게시글 작성 API
 router.post("/posts/:postsId", async (req, res) => {
     const { postsId } = req.params;
-    const createdAt = new Date();
     const { title, name, password, content } = req.body;
 
     const posts = await Posts.find({ postsId });
@@ -54,7 +53,7 @@ router.post("/posts/:postsId", async (req, res) => {
         return res.status(400).json({ success: false, result: "이미 있는 데이터입니다." });
     }
 
-    await Posts.create({ postsId, title, name, password, content, createdAt });
+    await Posts.create({ postsId, title, name, password, content});
     res.status(201).json({ success: true, result: "작성 완료" });
 });
 

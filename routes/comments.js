@@ -10,7 +10,7 @@ router.get("/posts/:postsId/comments", async (req, res) => {
     // postsId에 해당하는 posts를 가지고 오기
     const posts = await Posts.find({ postsId: postsId });
     // postsId에 해당하는 comments 가지고 오기
-    const comments = await Comments.find({ postsId: postsId });
+    const comments = await Comments.find({ postsId: postsId }).sort({createdAt : -1});
 
     const results = comments.map((comment) => {
         return {
@@ -28,13 +28,12 @@ router.get("/posts/:postsId/comments", async (req, res) => {
 router.post("/posts/:postsId/comments", async (req, res) => {
     const { postsId } = req.params;
     const { name, comment } = req.body;
-    const createdAt = new Date()
 
     if (comment === "") {
         return res.status(404).json({ success: false, result: "댓글 내용을 입력해주세요" });
     } else {
 
-        await Comments.create({ postsId, name, comment, createdAt });
+        await Comments.create({ postsId, name, comment});
         res.json({ result: "작성완료" });
     }
 })
