@@ -21,6 +21,7 @@ router.get("/posts/:postsId/comments", async (req, res) => {
     const comments = await Comments.find({ postsId: postsId }).sort({createdAt : -1});
     const savedComment = comments.map((comment) => {
         return {
+            "No.": comment.commentsId,
             "name": comment.name,
             "comment": comment.comment,
             "createdAt": comment.createdAt
@@ -34,8 +35,7 @@ router.get("/posts/:postsId/comments", async (req, res) => {
 router.post("/posts/:postsId/comments/:commentsId", async (req, res) => {
     const { postsId, commentsId } = req.params;
     const { name, comment } = req.body;
-    const savedPost = await Posts.find({ postsId });
-    console.log(savedPost)
+  
     if (comment === "") {
         return res.status(404).json({ success: false, result: "댓글 내용을 입력해주세요" });
     } else {
@@ -46,9 +46,8 @@ router.post("/posts/:postsId/comments/:commentsId", async (req, res) => {
 })
 
 // 댓글 수정 API
-router.put("/posts/:postsId/comments/:commentsId", async (req, res) => {
-    const { commentsId } = req.params;
-    const { comment } = req.body;
+router.put("/posts/:postsId/comments", async (req, res) => {
+    const { comment, commentsId } = req.body;
     const createdAt = new Date()
 
     const existsComments = await Comments.find({ commentsId });

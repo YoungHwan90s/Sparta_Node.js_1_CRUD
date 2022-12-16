@@ -7,6 +7,7 @@ router.get("/posts", async (req, res) => {
     const posts = await Posts.find({}).sort({createdAt : -1});
     const results = posts.map((post) => {
         return {
+            "No.": post.postsId,
             "title": post.title,
             "name": post.name,
             "createdAt": post.createdAt
@@ -14,7 +15,7 @@ router.get("/posts", async (req, res) => {
     });
     
     res.status(200).json({
-        "posts": results,
+        "전체 게시글": results,
     });
 });
 
@@ -28,6 +29,7 @@ router.get("/posts/:postsId", async (req, res) => {
     const existsPosts = await Posts.find({ postsId: Number(postsId) });
     const results = existsPosts.map((post) => {
         return {
+            "No.": post.postsId,
             "title": post.title,
             "name": post.name,
             "content": post.content,
@@ -36,7 +38,7 @@ router.get("/posts/:postsId", async (req, res) => {
     });
 
     if (existsPosts.length) {
-        res.status(200).json({ results });
+        res.status(200).json({ "게시글" : results });
     } else {
         return res.status(404).json({ success: false, result: "해당 데이터를 찾을 수 없습니다." });
     }
