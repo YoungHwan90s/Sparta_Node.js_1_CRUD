@@ -26,7 +26,7 @@ router.get("/posts/:postsId", async (req, res) => {
     // const [detail] = posts.filter((posts) => Number(postsId) === posts.postsId)
     // res.status(200).json({detail});
     const { postsId } = req.params;
-    const existsPosts = await Posts.find({ postsId: Number(postsId) });
+    const existsPosts = await Posts.find({ postsId });
     const results = existsPosts.map((post) => {
         return {
             "No.": post.postsId,
@@ -69,7 +69,7 @@ router.put("/posts/:postsId/", async (req, res) => {
     const savedPassword = existsPosts[0].password
 
     if (existsPosts.length && savedPassword === password) {
-        await Posts.updateOne({ postsId: Number(postsId) }, { $set: { title, content } });
+        await Posts.updateOne({ postsId }, { $set: { title, content } });
     } else {
         return res.status(404).json({ success: false, result: "해당 데이터를 찾을 수 없거나 비밀번호가 틀렸습니다." });
     }
@@ -82,12 +82,15 @@ router.delete("/posts/:postsId", async (req, res) => {
     const { postsId } = req.params;
     const { password } = req.body;
     const existsPosts = await Posts.find({ postsId });
-    const savedPassword = existsPosts[0].password
     
-    if (existsPosts.length && savedPassword === password) {
-        await Posts.deleteOne({ postsId });
-    } else {
-        return res.status(404).json({ success: false, result: "비밀번호가 틀렸습니다." });
+    if (existsPosts.length) {
+        const savedPassword = existsPosts[0].password
+        if (savedPassword === password) {
+            await Posts.deleteOne({ postsId });
+        }
+    } 
+    else {
+        return res.status(404).json({ success: false, result: "게시글이 없거나 비밀번호가 틀렸습니다." });
     }
 
     res.status(200).json({ success: true, result: "삭제 완료" });
